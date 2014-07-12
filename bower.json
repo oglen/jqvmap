@@ -1,0 +1,19 @@
+{
+  "name": "jqvmap",
+  "version": "0.0.0",
+  "homepage": "https://github.com/oglen/jqvmap",
+  "authors": [
+    "IsaacFang <isaac.fang@grapecity.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.1"
+  }
+}
