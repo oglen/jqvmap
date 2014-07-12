@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+
+    <script src="bowers/jquery/dist/jquery.js" type="text/javascript"></script>
+    <script src="bowers/underscore/underscore.js" type="text/javascript"></script>
+
+    <link href="jqvmap/jqvmap.css" media="screen" rel="stylesheet" type="text/css"/>
+    <script src="jqvmap/jquery.vmap.js" type="text/javascript"></script>
+
+    <script src="data/jquery.vmap.world.js" type="text/javascript"></script>
+    <script src="data/pins.js" type="text/javascript"></script>
+
+    <script>
+        $(function () {
+
+            var deadline;
+            $('#vmap').vectorMap({
+                map: 'world_en',
+                backgroundColor: '#ffffff',
+                color: '#336633',
+                hoverOpacity: 0.7,
+                selectedColor: '#ff6600',
+                enableZoom: false,
+                showTooltip: false,
+                scaleColors: ['#ffffff', '#000000'],
+                normalizeFunction: 'polynomial',
+                onRegionOver: function (event, code, region) {
+
+                    clearTimeout(deadline);
+                    var $pin = $('.clown_pin');
+
+                    var template = _.template($('#clown_pin_template').html());
+                    $pin.html(template(pins[code] || pins['unknown'])).one('mouseenter', function () {
+                        clearTimeout(deadline);
+                    });
+
+
+                    var placeholder = $('#jqvmap1_' + code + '_pin'),
+                            pinPosition = {
+                                top: placeholder.position().top - $pin.outerHeight() / 2,
+                                left: placeholder.position().left
+                            };
+                    if (pinPosition.left + $pin.outerWidth() + 20 > $('#vmap').innerWidth()) {
+                        pinPosition.left = placeholder.position().left - $pin.outerWidth();
+                    }
+
+                    $pin.stop().show(0).animate(pinPosition, 350);
+                },
+                onRegionOut: function (event, code, region) {
+                    deadline = setTimeout(function () {
+                        $('.clown_pin').fadeOut();
+                    }, 350);
+                },
+                pinMode: 'placeholder'
+            });
+        });
+    </script>
+    <style>
+        .clown_pin {
+            display: none;
+            width: 200px;
+            font-family: Consolas, Menlo, Monaco, monospace;
+            font-size: 12px;
+            position: absolute;
+            background: #ffffff;
+            box-shadow: 0 5px 15px #333333;
+            padding: 10px;
+        }
+
+        .clown_pin h2 {
+            margin: 0;
+        }
+
+        .clown_pin img {
+            height: 32px;
+            width: 32px;
+            display: block;
+            margin: -20px 0 0 -20px;
+            background: #333333;
+        }
+
+        .clown_pin ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .clown_pin ul > li {
+            padding: 0;
+            margin: 0;
+            display: inline;
+        }
+    </style>
+    <title>Advanced Pins</title>
+</head>
+<body>
+<div id="vmap" style="width: 800px; height: 600px;">
+    <div class="clown_pin"></div>
+</div>
+<script type="text/template" id="clown_pin_template">
+    <img src="<%= img %>" alt="Icon"/>
+    <h2><%= name %></h2>
+    <ul>
+        <% $.each(links, function(index, link){ %>
+        <li><a href="<%= link.href %>"><%= link.text %></a></li>
+        <% }); %>
+    </ul>
+</script>
+</body>
+</html>
